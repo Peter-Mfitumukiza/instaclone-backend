@@ -52,38 +52,35 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  await User.findOne({ email: req.body.email })
+  User.findOne({ email: req.body.email })
     .then(async (user) => {
-      if (!user) {
-        return res.json({
-          status: "error",
-          message: "Invalid email or password.",
-        });
-      } else {
+        if (!user) {
+            return res.json({
+            status: "error",
+            message: "Invalid email or password.",
+            });
+        }
         const validPassword = await bcrypt.compare(req.body.password, user.password);
         if (!validPassword) {
           return res.json({
             status: "error",
             message: "Invalid email or password.",
           });
-        } else {
-          if (user.status !== "ACTIVE") {
+        }
+        if (user.status !== "ACTIVE") {
             return res.json({
               status: "error",
               message: "Account not currently active.",
             });
-          } else {
-            let token = await jwt.sign({ ...user }, process.env.SECRET);
-            return res.json({
+        } 
+        let token = jwt.sign({ ...user }, process.env.SECRET);
+        return res.json({
                 status: "success",
                 message: "Logged in successfully.",
                 data: token,
-            });
-          }
-        }
-      }
+                });
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
     });
 });
