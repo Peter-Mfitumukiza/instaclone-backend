@@ -1,3 +1,4 @@
+require('./models/mongod');
 const express = require("express");
 const cors = require('cors');
 const userController = require('./controllers/UserController');
